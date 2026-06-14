@@ -15,7 +15,7 @@ public:
       : host_(std::move(host)), port_(std::move(port)) {};
   net_utils::NetResult<int, int> resolve();
   std::size_t num_results() const noexcept;
-  const AddrInfo &get_result_at(std::size_t) const noexcept;
+  const AddrInfo &get_result_at(std::size_t) const;
 
 private:
   std::string host_;

@@ -18,14 +18,14 @@ public:
            struct sockaddr *addr)
       : family_(family), socktype_(socktype), protocol_(protocol),
         addr_len_(addr_len), addr_(nullptr) {
-    addr_ = new sockaddr{};
+    addr_ = static_cast<struct sockaddr *>(::operator new(addr_len_));
     memcpy(addr_, addr, addr_len);
   };
-  ~AddrInfo() { delete addr_; };
+  ~AddrInfo() { ::operator delete(addr_); };
   AddrInfo(const AddrInfo &orig)
       : family_(orig.family_), socktype_(orig.socktype_),
         protocol_(orig.protocol_), addr_len_(orig.addr_len_) {
-    addr_ = new sockaddr{};
+    addr_ = static_cast<struct sockaddr *>(::operator new(addr_len_));
     memcpy(addr_, orig.addr_, addr_len_);
   };
   AddrInfo &operator=(const AddrInfo &orig) {
@@ -34,7 +34,8 @@ public:
       socktype_ = orig.socktype_;
       protocol_ = orig.protocol_;
       addr_len_ = orig.addr_len_;
-      addr_ = new sockaddr{};
+      ::operator delete(addr_);
+      addr_ = static_cast<struct sockaddr *>(::operator new(addr_len_));
       memcpy(addr_, orig.addr_, addr_len_);
     }
     return *this;
@@ -52,6 +53,7 @@ public:
       socktype_ = orig.socktype_;
       protocol_ = orig.protocol_;
       addr_len_ = orig.addr_len_;
+      ::operator delete(addr_);
       addr_ = orig.addr_;
       orig.addr_ = nullptr;
       orig.addr_len_ = 0;
