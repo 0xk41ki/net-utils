@@ -1,17 +1,10 @@
 #include <cstring>
-#include <iostream>
 #include <net_utils/dns.hpp>
 #include <net_utils/errors.hpp>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <new>
-#include <ostream>
 #include <sys/socket.h>
 #include <vector>
-
-// net_utils::DnsResolver::DnsResolver() {
-//
-// };
 
 net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   struct addrinfo hints{};
@@ -22,7 +15,6 @@ net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   int rc = getaddrinfo(host_.c_str(), port_.c_str(), &hints, &res);
 
   if (rc < 0) {
-    // some failure happened. TODO: handle this
     return std::unexpected(NetError(NetErrorCode::AddressResolutionFailed, rc));
   }
 
@@ -42,57 +34,4 @@ std::size_t net_utils::DnsResolver::num_results() const noexcept {
 const net_utils::AddrInfo &
 net_utils::DnsResolver::get_result_at(std::size_t idx) const noexcept {
   return addrs_.at(idx);
-}
-
-net_utils::AddrInfo::AddrInfo(int family, int socktype, int protocol,
-                              socklen_t addr_len, struct sockaddr *addr)
-    : family_(family), socktype_(socktype), protocol_(protocol),
-      addr_len_(addr_len), addr_(nullptr) {
-  addr_ = static_cast<struct sockaddr *>(::operator new(addr_len));
-  memcpy(addr_, addr, addr_len);
-};
-
-net_utils::AddrInfo::~AddrInfo() { ::operator delete(addr_); };
-
-net_utils::AddrInfo::AddrInfo(const AddrInfo &orig)
-    : family_(orig.family_), socktype_(orig.socktype_),
-      protocol_(orig.protocol_), addr_len_(orig.addr_len_) {
-  addr_ = static_cast<struct sockaddr *>(::operator new(addr_len_));
-  memcpy(addr_, orig.addr_, addr_len_);
-}
-
-net_utils::AddrInfo &net_utils::AddrInfo::operator=(const AddrInfo &orig) {
-  if (&orig != this) {
-    family_ = orig.family_;
-    socktype_ = orig.socktype_;
-    protocol_ = orig.protocol_;
-    addr_len_ = orig.addr_len_;
-    addr_ = static_cast<struct sockaddr *>(::operator new(addr_len_));
-    memcpy(addr_, orig.addr_, addr_len_);
-  }
-  return *this;
-}
-
-net_utils::AddrInfo::AddrInfo(AddrInfo &&orig) noexcept
-    : family_(orig.family_), socktype_(orig.socktype_),
-      protocol_(orig.protocol_), addr_len_(orig.addr_len_), addr_(orig.addr_) {
-  orig.addr_ = nullptr;
-  orig.addr_len_ = 0;
-}
-
-net_utils::AddrInfo &net_utils::AddrInfo::operator=(AddrInfo &&orig) noexcept {
-  if (&orig != this) {
-    family_ = orig.family_;
-    socktype_ = orig.socktype_;
-    protocol_ = orig.protocol_;
-    addr_len_ = orig.addr_len_;
-    addr_ = orig.addr_;
-    orig.addr_ = nullptr;
-    orig.addr_len_ = 0;
-  }
-  return *this;
-}
-
-std::ostream &operator<<(std::ostream &os, net_utils::AddrInfo &dns) {
-  return os << dns.to_string();
 }
