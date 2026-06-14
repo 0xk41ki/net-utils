@@ -23,9 +23,16 @@ public:
   AddrInfo(AddrInfo &&) noexcept;
   AddrInfo &operator=(AddrInfo &&) noexcept;
   inline std::string to_string() const {
-    char *buf = new char[INET6_ADDRSTRLEN];
-    inet_ntop(family_, &addr_, buf, INET6_ADDRSTRLEN);
-    return std::string(buf, buf + INET6_ADDRSTRLEN);
+    constexpr const size_t BUFLEN = INET6_ADDRSTRLEN;
+    char buf[BUFLEN];
+    if (family_ == AF_INET) {
+      inet_ntop(family_, &reinterpret_cast<sockaddr_in *>(addr_)->sin_addr, buf,
+                BUFLEN);
+    } else {
+      inet_ntop(family_, &reinterpret_cast<sockaddr_in6 *>(addr_)->sin6_addr,
+                buf, BUFLEN);
+    }
+    return std::string(buf);
   };
   int family() const noexcept { return family_; }
   int socktype() const noexcept { return socktype_; }

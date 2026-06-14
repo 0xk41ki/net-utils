@@ -1,7 +1,9 @@
 #include <cstring>
+#include <iostream>
 #include <net_utils/dns.hpp>
 #include <net_utils/errors.hpp>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <new>
 #include <ostream>
 #include <sys/socket.h>
@@ -13,7 +15,7 @@
 
 net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   struct addrinfo hints{};
-  hints.ai_family = AF_INET;
+  hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
   struct addrinfo *res = nullptr;
