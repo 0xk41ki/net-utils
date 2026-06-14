@@ -6,6 +6,9 @@ namespace net_utils {
 enum class NetErrorCode {
   AddressResolutionFailed,
   AllocFailure,
+  InternalOsError,
+  ConnectionClosed,
+  ConnectionNotEstablished,
 };
 
 constexpr std::string_view to_string(NetErrorCode code) {
@@ -14,6 +17,12 @@ constexpr std::string_view to_string(NetErrorCode code) {
     return "AddressResolutionFailed";
   case NetErrorCode::AllocFailure:
     return "AllocFailure";
+  case NetErrorCode::InternalOsError:
+    return "InternalOsError";
+  case NetErrorCode::ConnectionClosed:
+    return "ConnectionClosed";
+  case NetErrorCode::ConnectionNotEstablished:
+    return "ConnectionNotEstablished";
   }
 
   return "UnknownError";

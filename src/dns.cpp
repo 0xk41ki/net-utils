@@ -19,8 +19,8 @@ net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   }
   addrs_.clear();
   for (const auto *ai = res; ai != nullptr; ai = ai->ai_next) {
-    addrs_.push_back(AddrInfo(ai->ai_family, ai->ai_socktype, ai->ai_protocol,
-                              ai->ai_addrlen, ai->ai_addr));
+    addrs_.push_back(AddrInfo{ai->ai_family, ai->ai_socktype, ai->ai_protocol,
+                              SocketAddr(ai->ai_addr, ai->ai_addrlen)});
   }
   freeaddrinfo(res);
 
