@@ -9,6 +9,7 @@ enum class NetErrorCode {
   InternalOsError,
   ConnectionClosed,
   ConnectionNotEstablished,
+  InternalSSLError,
 };
 
 constexpr std::string_view to_string(NetErrorCode code) {
@@ -23,6 +24,8 @@ constexpr std::string_view to_string(NetErrorCode code) {
     return "ConnectionClosed";
   case NetErrorCode::ConnectionNotEstablished:
     return "ConnectionNotEstablished";
+  case NetErrorCode::InternalSSLError:
+    return "InternalSSLError";
   }
 
   return "UnknownError";
