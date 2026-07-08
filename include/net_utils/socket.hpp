@@ -15,6 +15,7 @@ public:
   NetResult<long, int> read(char *buf, std::size_t len) noexcept;
   NetResult<long, int> write(char *buf, std::size_t len) noexcept;
   NetResult<void, int> close() noexcept;
+  inline int fd() { return fd_; }
   RawSocket(const RawSocket &) = delete;
   RawSocket &operator=(const RawSocket &) = delete;
   RawSocket(RawSocket &&other) noexcept
