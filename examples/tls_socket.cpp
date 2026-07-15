@@ -2,6 +2,7 @@
 #include <iostream>
 #include <net_utils/dns.hpp>
 #include <net_utils/tls.hpp>
+#include <openssl/err.h>
 #include <string>
 #include <sys/socket.h>
 #include <utility>
@@ -63,7 +64,10 @@ int main() {
       if (r.error().code() == NetErrorCode::ConnectionClosed) {
         break; // clean EOF
       }
-      std::cout << "\nread failed: " << to_string(r.error().code())
+      auto error = r.error();
+      std::cout << "\nread failed: " << to_string(error.code())
+                << " data:" << error.data()
+                << " decoded: " << TlsSocket::error_decode_helper(error.data())
                 << std::endl;
       return -1;
     }

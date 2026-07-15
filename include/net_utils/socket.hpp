@@ -2,19 +2,19 @@
 
 #include "net_utils/errors.hpp"
 #include "net_utils/socket_addr.hpp"
-#include <cstddef>
+#include <cstdint>
 namespace net_utils {
 class RawSocket {
 public:
-  static NetResult<RawSocket, int> create(int domain, int type,
-                                          int protocol) noexcept;
-  NetResult<void, int> set_flags(int flags) noexcept;
-  NetResult<int, int> get_flags() noexcept;
-  NetResult<void, int> connect(const SocketAddr &addr) noexcept;
-  NetResult<void, int> bind(const SocketAddr &addr) noexcept;
-  NetResult<long, int> read(char *buf, std::size_t len) noexcept;
-  NetResult<long, int> write(char *buf, std::size_t len) noexcept;
-  NetResult<void, int> close() noexcept;
+  static NetResult<RawSocket, std::uint64_t> create(int domain, int type,
+                                                    int protocol) noexcept;
+  NetResult<void, std::uint64_t> set_flags(int flags) noexcept;
+  NetResult<int, std::uint64_t> get_flags() noexcept;
+  NetResult<void, std::uint64_t> connect(const SocketAddr &addr) noexcept;
+  NetResult<void, std::uint64_t> bind(const SocketAddr &addr) noexcept;
+  NetResult<long, std::uint64_t> read(char *buf, std::size_t len) noexcept;
+  NetResult<long, std::uint64_t> write(char *buf, std::size_t len) noexcept;
+  NetResult<void, std::uint64_t> close() noexcept;
   inline int fd() { return fd_; }
   RawSocket(const RawSocket &) = delete;
   RawSocket &operator=(const RawSocket &) = delete;
