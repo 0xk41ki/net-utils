@@ -5,6 +5,7 @@
 #include "openssl/ssl.h"
 #include <cstdint>
 #include <functional>
+#include <span>
 namespace net_utils {
 class OpenSSLCtx {
 public:
@@ -40,10 +41,9 @@ public:
   NetResult<void, std::uint64_t> bind(const SocketAddr &addr) noexcept {
     return underlying_.bind(addr);
   };
-  NetResult<std::size_t, std::uint64_t> read(char *buf,
-                                             std::size_t len) noexcept;
-  NetResult<std::size_t, std::uint64_t> write(const char *buf,
-                                              std::size_t len) noexcept;
+  NetResult<std::size_t, std::uint64_t> read(std::span<std::byte> buf) noexcept;
+  NetResult<std::size_t, std::uint64_t>
+  write(std::span<const std::byte> buf) noexcept;
   NetResult<void, std::uint64_t> close() noexcept;
   static std::string error_decode_helper(std::uint64_t error_code) noexcept;
   TlsSocket(const TlsSocket &) = delete;

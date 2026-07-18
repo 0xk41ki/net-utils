@@ -8,6 +8,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <openssl/tls1.h>
+#include <span>
 #include <sys/socket.h>
 
 using namespace net_utils;
@@ -128,17 +129,17 @@ TlsSocket::connect(const SocketAddr &addr) noexcept {
 };
 
 NetResult<std::size_t, std::uint64_t>
-TlsSocket::read(char *buf, std::size_t len) noexcept {
+TlsSocket::read(std::span<std::byte> buf) noexcept {
   std::size_t read;
-  int rc = ::SSL_read_ex(ssl_, buf, len, &read);
+  int rc = ::SSL_read_ex(ssl_, buf.data(), buf.size(), &read);
   if (rc != 1)
     return std::unexpected(extract_SSL_error(ssl_, rc));
   return read;
 }
 NetResult<std::size_t, std::uint64_t>
-TlsSocket::write(const char *buf, std::size_t len) noexcept {
+TlsSocket::write(std::span<const std::byte> buf) noexcept {
   std::size_t written;
-  int rc = ::SSL_write_ex(ssl_, buf, len, &written);
+  int rc = ::SSL_write_ex(ssl_, buf.data(), buf.size(), &written);
   if (rc != 1)
     return std::unexpected(extract_SSL_error(ssl_, rc));
   return written;

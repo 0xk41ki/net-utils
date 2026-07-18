@@ -53,9 +53,9 @@ RawSocket::bind(const SocketAddr &addr) noexcept {
   return {};
 }
 
-NetResult<long, std::uint64_t> RawSocket::read(char *buf,
-                                               std::size_t len) noexcept {
-  long n = ::recv(fd_, buf, len, 0);
+NetResult<long, std::uint64_t>
+RawSocket::read(std::span<std::byte> buf) noexcept {
+  long n = ::recv(fd_, buf.data(), buf.size(), 0);
   if (n < 0) {
     return std::unexpected(NetError(NetErrorCode::InternalOsError,
                                     static_cast<std::uint64_t>(errno)));
@@ -66,9 +66,9 @@ NetResult<long, std::uint64_t> RawSocket::read(char *buf,
   }
   return n;
 }
-NetResult<long, std::uint64_t> RawSocket::write(char *buf,
-                                                std::size_t len) noexcept {
-  long n = ::send(fd_, buf, len, 0);
+NetResult<long, std::uint64_t>
+RawSocket::write(std::span<const std::byte> buf) noexcept {
+  long n = ::send(fd_, buf.data(), buf.size(), 0);
   if (n < 0) {
     return std::unexpected(NetError(NetErrorCode::InternalOsError,
                                     static_cast<std::uint64_t>(errno)));

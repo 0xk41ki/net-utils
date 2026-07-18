@@ -52,15 +52,17 @@ int main() {
 
   std::string request =
       "GET / HTTP/1.0\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
-  if (auto w = sock.write(request.data(), request.size()); !w.has_value()) {
+  if (auto w = sock.write({reinterpret_cast<const std::byte *>(request.data()),
+                           request.size()});
+      !w.has_value()) {
     std::cout << "write failed: " << to_string(w.error().code()) << std::endl;
     return -1;
   }
 
   std::cout << "--- response ---" << std::endl;
-  char buf[4096];
+  std::byte buf[4096];
   while (true) {
-    auto r = sock.read(buf, sizeof(buf));
+    auto r = sock.read(buf);
     if (!r.has_value()) {
       if (r.error().code() == NetErrorCode::ConnectionClosed) {
         break; // clean EOF
@@ -69,7 +71,7 @@ int main() {
                 << std::endl;
       return -1;
     }
-    std::cout.write(buf, *r);
+    std::cout.write(reinterpret_cast<char *>(buf), *r);
   }
   std::cout << "\n--- end ---" << std::endl;
 

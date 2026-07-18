@@ -3,6 +3,7 @@
 #include "net_utils/errors.hpp"
 #include "net_utils/socket_addr.hpp"
 #include <cstdint>
+#include <span>
 namespace net_utils {
 class RawSocket {
 public:
@@ -12,8 +13,8 @@ public:
   NetResult<int, std::uint64_t> get_flags() noexcept;
   NetResult<void, std::uint64_t> connect(const SocketAddr &addr) noexcept;
   NetResult<void, std::uint64_t> bind(const SocketAddr &addr) noexcept;
-  NetResult<long, std::uint64_t> read(char *buf, std::size_t len) noexcept;
-  NetResult<long, std::uint64_t> write(char *buf, std::size_t len) noexcept;
+  NetResult<long, std::uint64_t> read(std::span<std::byte> buf) noexcept;
+  NetResult<long, std::uint64_t> write(std::span<const std::byte> buf) noexcept;
   NetResult<void, std::uint64_t> close() noexcept;
   inline int fd() { return fd_; }
   RawSocket(const RawSocket &) = delete;

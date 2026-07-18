@@ -54,15 +54,17 @@ int main() {
       "GET /ws/btcusdt@trade HTTP/1.1\r\nHost: " + host +
       "\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Key: "
       "dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
-  if (auto w = sock.write(request.data(), request.size()); !w.has_value()) {
+  if (auto w = sock.write(
+          {reinterpret_cast<std::byte *>(request.data()), request.size()});
+      !w.has_value()) {
     std::cout << "write failed: " << to_string(w.error().code()) << std::endl;
     return -1;
   }
 
   std::cout << "--- response ---" << std::endl;
-  char buf[4096];
+  std::byte buf[4096];
   while (true) {
-    auto r = sock.read(buf, sizeof(buf));
+    auto r = sock.read(buf);
     if (!r.has_value()) {
       if (r.error().code() == NetErrorCode::ConnectionClosed) {
         break; // clean EOF
@@ -75,7 +77,7 @@ int main() {
       return -1;
     }
     std::cout << "[] read " << *r << "bytes " << std::endl;
-    std::cout.write(buf, *r);
+    std::cout.write(reinterpret_cast<char *>(buf), *r);
     std::cout << std::endl;
   }
   std::cout << "\n--- end ---" << std::endl;
