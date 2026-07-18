@@ -40,8 +40,10 @@ public:
   NetResult<void, std::uint64_t> bind(const SocketAddr &addr) noexcept {
     return underlying_.bind(addr);
   };
-  NetResult<long, std::uint64_t> read(char *buf, std::size_t len) noexcept;
-  NetResult<long, std::uint64_t> write(char *buf, std::size_t len) noexcept;
+  NetResult<std::size_t, std::uint64_t> read(char *buf,
+                                             std::size_t len) noexcept;
+  NetResult<std::size_t, std::uint64_t> write(const char *buf,
+                                              std::size_t len) noexcept;
   NetResult<void, std::uint64_t> close() noexcept;
   static std::string error_decode_helper(std::uint64_t error_code) noexcept;
   TlsSocket(const TlsSocket &) = delete;

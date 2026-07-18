@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <cstring>
 #include <net_utils/dns.hpp>
 #include <net_utils/errors.hpp>
@@ -6,7 +7,8 @@
 #include <sys/socket.h>
 #include <vector>
 
-net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
+net_utils::NetResult<std::size_t, std::uint64_t>
+net_utils::DnsResolver::resolve() {
   struct addrinfo hints{};
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
@@ -15,7 +17,8 @@ net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   int rc = getaddrinfo(host_.c_str(), port_.c_str(), &hints, &res);
 
   if (rc != 0) {
-    return std::unexpected(NetError(NetErrorCode::AddressResolutionFailed, rc));
+    return std::unexpected(NetError(NetErrorCode::AddressResolutionFailed,
+                                    static_cast<uint64_t>(rc)));
   }
   addrs_.clear();
   for (const auto *ai = res; ai != nullptr; ai = ai->ai_next) {
@@ -24,10 +27,6 @@ net_utils::NetResult<int, int> net_utils::DnsResolver::resolve() {
   }
   freeaddrinfo(res);
 
-  return 0;
-};
-
-std::size_t net_utils::DnsResolver::num_results() const noexcept {
   return addrs_.size();
 };
 

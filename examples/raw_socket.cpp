@@ -13,14 +13,15 @@ int main() {
   const std::string port = "80";
 
   DnsResolver resolver(host, port);
-  if (auto res = resolver.resolve(); !res.has_value()) {
+  auto res = resolver.resolve();
+  if (!res.has_value()) {
     std::cout << "dns resolution failed: " << to_string(res.error().code())
               << std::endl;
     return -1;
   }
 
   const AddrInfo *chosen = nullptr;
-  for (std::size_t i = 0; i < resolver.num_results(); i++) {
+  for (std::size_t i = 0; i < res.value(); i++) {
     const AddrInfo &ai = resolver.get_result_at(i);
     if (ai.family == AF_INET) {
       chosen = &ai;

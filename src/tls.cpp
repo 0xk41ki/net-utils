@@ -127,16 +127,16 @@ TlsSocket::connect(const SocketAddr &addr) noexcept {
   return {};
 };
 
-NetResult<long, std::uint64_t> TlsSocket::read(char *buf,
-                                               std::size_t len) noexcept {
+NetResult<std::size_t, std::uint64_t>
+TlsSocket::read(char *buf, std::size_t len) noexcept {
   std::size_t read;
   int rc = ::SSL_read_ex(ssl_, buf, len, &read);
   if (rc != 1)
     return std::unexpected(extract_SSL_error(ssl_, rc));
   return read;
 }
-NetResult<long, std::uint64_t> TlsSocket::write(char *buf,
-                                                std::size_t len) noexcept {
+NetResult<std::size_t, std::uint64_t>
+TlsSocket::write(const char *buf, std::size_t len) noexcept {
   std::size_t written;
   int rc = ::SSL_write_ex(ssl_, buf, len, &written);
   if (rc != 1)

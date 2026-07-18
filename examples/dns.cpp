@@ -12,7 +12,7 @@ int main() {
               << to_string(res.error().code()) << std::endl;
     return -1;
   }
-  std::size_t num = resolver.num_results();
+  std::size_t num = res.value();
   std::cout << "addr resolved to " << num << " addresses" << std::endl;
   for (std::size_t i = 0; i < num; i++) {
     std::string ip = resolver.get_result_at(i).to_string();
