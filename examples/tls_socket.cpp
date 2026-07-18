@@ -10,7 +10,7 @@
 using namespace net_utils;
 
 int main() {
-  const std::string host = "google.com";
+  const std::string host = "stream.binance.com";
   const std::string port = "443";
 
   DnsResolver resolver(host, port);
@@ -50,7 +50,9 @@ int main() {
   }
 
   std::string request =
-      "GET / HTTP/1.0\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
+      "GET /ws/btcusdt@trade HTTP/1.1\r\nHost: " + host +
+      "\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Key: "
+      "dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
   if (auto w = sock.write(request.data(), request.size()); !w.has_value()) {
     std::cout << "write failed: " << to_string(w.error().code()) << std::endl;
     return -1;
@@ -73,6 +75,7 @@ int main() {
     }
     std::cout << "[] read " << *r << "bytes " << std::endl;
     std::cout.write(buf, *r);
+    std::cout << std::endl;
   }
   std::cout << "\n--- end ---" << std::endl;
 
